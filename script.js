@@ -113,22 +113,55 @@ function arrangePhotos(){
 }
 
 async function printPaper(){
-    if(paper.children.length === 0){
-        arrangePhotos();
+
+    if(photos.length === 0){
+        setStatus("사진이 없습니다.");
+        return;
     }
 
     const printArea = document.getElementById("printArea");
+
     printArea.innerHTML = "";
 
     const printPaper = document.createElement("div");
     printPaper.className = "printPaper";
 
-    printPaper.innerHTML = paper.innerHTML;
+    const w = Number(photoWidth.value);
+    const h = Number(photoHeight.value);
+
+    const cols = Math.floor(21 / w);
+    const rows = Math.floor(29.7 / h);
+    const max = cols * rows;
+
+    photos.slice(0, max).forEach((photo, index)=>{
+
+        const x = index % cols;
+        const y = Math.floor(index / cols);
+
+        const cell = document.createElement("div");
+        cell.className = "photoCell";
+
+        cell.style.width = `${(w / 21) * 100}%`;
+        cell.style.height = `${(h / 29.7) * 100}%`;
+        cell.style.left = `${(x * w / 21) * 100}%`;
+        cell.style.top = `${(y * h / 29.7) * 100}%`;
+
+        const image = document.createElement("img");
+        image.src = photo.src;
+        image.draggable = false;
+
+        cell.appendChild(image);
+        printPaper.appendChild(cell);
+
+    });
+
     printArea.appendChild(printPaper);
 
     await waitForImages(printArea);
 
-    window.print();
+    setTimeout(()=>{
+        window.print();
+    }, 300);
 }
 
 function waitForImages(root){
