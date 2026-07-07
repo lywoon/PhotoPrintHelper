@@ -1,3 +1,200 @@
 <!DOCTYPE html>
-<html>
+<html lang="ko">
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport"
+content="width=device-width,initial-scale=1.0,viewport-fit=cover">
+
+<title>PhotoPrintHelper v2.0</title>
+
+<link rel="stylesheet" href="style.css">
+
+</head>
+
+<body>
+
+<div class="container">
+
+<header class="header">
+
+<div>
+
+<h1>📷 PhotoPrintHelper</h1>
+
+<div class="version">
+v2.0
+</div>
+
+</div>
+
+</header>
+
+
+<section class="card">
+
+<h2>사진 선택</h2>
+
+<div class="buttonRow">
+
+<label class="primaryButton">
+
+사진 선택
+
+<input
+type="file"
+id="photoInput"
+accept="image/*,.heic"
+multiple
+hidden>
+
+</label>
+
+<button
+id="autoArrangeButton"
+class="secondaryButton">
+
+A4 자동 배치
+
+</button>
+
+<button
+id="printButton"
+class="secondaryButton">
+
+인쇄
+
+</button>
+
+</div>
+
+</section>
+
+
+
+<section class="card">
+
+<div class="sizeGrid">
+
+<div>
+
+<label>
+
+가로(cm)
+
+</label>
+
+<input
+type="number"
+id="photoWidth"
+value="2"
+min="1"
+step="0.1">
+
+</div>
+
+<div>
+
+<label>
+
+세로(cm)
+
+</label>
+
+<input
+type="number"
+id="photoHeight"
+value="2"
+min="1"
+step="0.1">
+
+</div>
+
+</div>
+
+</section>
+
+
+
+<section class="card statusCard">
+
+<div class="statusRow">
+
+<div>
+
+사진
+
+<span id="photoCount">
+
+0
+
+</span>
+
+장
+
+</div>
+
+<div>
+
+A4 최대
+
+<span id="maxCount">
+
+0
+
+</span>
+
+장
+
+</div>
+
+</div>
+
+<div
+id="statusText"
+class="status">
+
+대기중
+
+</div>
+
+</section>
+
+
+
+<section class="card">
+
+<h2>선택한 사진</h2>
+
+<div
+id="thumbnailArea"
+class="thumbnailArea">
+
+</div>
+
+</section>
+
+
+
+<section class="card print">
+
+<h2>A4 미리보기</h2>
+
+<div class="previewWrapper">
+
+<div
+id="a4Preview"
+class="preview">
+
+</div>
+
+</div>
+
+</section>
+
+</div>
+
+<script src="script.js"></script>
+
+</body>
 </html>
