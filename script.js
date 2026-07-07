@@ -87,6 +87,8 @@ async function loadPhotos(e){
     }
 
     setStatus(`${photos.length}장의 사진을 불러왔습니다.`);
+
+    photoInput.value = "";
 }
 
 function arrangePhotos(){
