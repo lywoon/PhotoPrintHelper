@@ -179,36 +179,58 @@ body{
 
 }
 
-@media print{
-
-body{
-    background:white;
-}
-
-.topbar,
-.toolbar,
-.sizeBox,
-.thumbnailArea,
-.previewHeader{
+#printArea{
     display:none;
 }
 
-.panel{
-    box-shadow:none;
-    padding:0;
-    border:none;
+@media print{
+
+body>*{
+    display:none !important;
 }
 
-.paper{
+#printArea{
+
+    display:block !important;
+
+    position:fixed;
+
+    left:0;
+
+    top:0;
+
     width:210mm;
+
     height:297mm;
+
+}
+
+#printArea .paper{
+
+    width:210mm;
+
+    height:297mm;
+
     border:none;
+
     box-shadow:none;
+
+    margin:0;
+
+}
+
+.photoCell{
+
+    border:.2mm solid #999;
+
 }
 
 @page{
+
     size:A4;
+
     margin:0;
+
 }
 
 }
