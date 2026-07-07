@@ -9,6 +9,7 @@ const printBtn = document.getElementById("printBtn");
 const printArea = document.getElementById("printArea");
 
 let photos = [];
+let isPrinting = false;
 
 photoInput.addEventListener("change", loadPhotos);
 arrangeBtn.addEventListener("click", arrangePhotos);
@@ -45,7 +46,7 @@ async function loadPhotos(event){
   const files = Array.from(event.target.files);
 
   if(files.length === 0){
-    setStatus("대기중");
+    setStatus("배치 전");
     return;
   }
 
@@ -117,7 +118,7 @@ function arrangePhotos(){
   }
 
   const placed = makeCells(paper);
-  setStatus(`배치 완료 (${placed}장)`);
+  setStatus(`사진 ${placed}장 배치 완료`);
 }
 
 async function printPhotos(){
@@ -139,7 +140,10 @@ async function printPhotos(){
   makeCells(printPaper);
   await waitImages(printArea);
 
+  isPrinting = true;
   document.body.classList.add("printing");
+
+  setStatus("인쇄 준비 완료");
 
   setTimeout(()=>{
     window.print();
@@ -159,7 +163,10 @@ function waitImages(root){
   }));
 }
 
-function restore(){
+function restoreAfterPrint(){
+  if(!isPrinting) return;
+
+  isPrinting = false;
   document.body.classList.remove("printing");
   printArea.innerHTML = "";
 
@@ -168,8 +175,22 @@ function restore(){
   }
 }
 
-window.addEventListener("afterprint",restore);
-window.addEventListener("focus",restore);
-document.addEventListener("visibilitychange",()=>{
-  if(!document.hidden) restore();
-});
+window.addEventListener("afterprint", restoreAfterPrint);
+
+if(window.matchMedia){
+  const mediaQuery = window.matchMedia("print");
+
+  if(mediaQuery.addEventListener){
+    mediaQuery.addEventListener("change", event=>{
+      if(!event.matches){
+        restoreAfterPrint();
+      }
+    });
+  }else if(mediaQuery.addListener){
+    mediaQuery.addListener(event=>{
+      if(!event.matches){
+        restoreAfterPrint();
+      }
+    });
+  }
+}
