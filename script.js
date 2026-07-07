@@ -52,34 +52,44 @@ async function loadPhotos(event){
   setStatus("사진 불러오는 중...");
 
   for(const file of files){
-    const src = await readFile(file);
-    const img = await loadImage(src);
+    try{
+      const src = await readFile(file);
+      const img = await loadImage(src);
 
-    photos.push({
-      src,
-      width: img.naturalWidth,
-      height: img.naturalHeight
-    });
+      photos.push({
+        src,
+        width: img.naturalWidth,
+        height: img.naturalHeight
+      });
 
-    const thumb = document.createElement("img");
-    thumb.className = "thumb";
-    thumb.src = src;
-    thumbs.appendChild(thumb);
+      const thumb = document.createElement("img");
+      thumb.className = "thumb";
+      thumb.src = src;
+      thumbs.appendChild(thumb);
+    }catch(e){
+      console.error(e);
+    }
   }
 
   photoInput.value = "";
   setStatus(`${photos.length}장 불러옴`);
 }
 
-function makeCells(target){
-  target.innerHTML = "";
-
+function getLayout(){
   const w = Number(photoWidth.value);
   const h = Number(photoHeight.value);
 
-  const cols = Math.floor(21 / w);
-  const rows = Math.floor(29.7 / h);
+  const cols = Math.max(1, Math.floor(21 / w));
+  const rows = Math.max(1, Math.floor(29.7 / h));
   const max = cols * rows;
+
+  return {w,h,cols,rows,max};
+}
+
+function makeCells(target){
+  target.innerHTML = "";
+
+  const {w,h,cols,max} = getLayout();
 
   photos.slice(0,max).forEach((photo,index)=>{
     const x = index % cols;
@@ -135,14 +145,14 @@ async function printPhotos(){
 
   setTimeout(()=>{
     window.print();
-  },400);
+  },500);
 }
 
 function waitImages(root){
   const imgs = Array.from(root.querySelectorAll("img"));
 
   return Promise.all(imgs.map(img=>{
-    if(img.complete) return Promise.resolve();
+    if(img.complete && img.naturalWidth > 0) return Promise.resolve();
 
     return new Promise(resolve=>{
       img.onload = resolve;
