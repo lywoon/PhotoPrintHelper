@@ -2,63 +2,59 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover">
-<title>PhotoPrintHelper v2.0</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>PhotoPrintHelper v2.1</title>
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
 <div class="app">
-<header class="topbar">
-  <div class="titleArea">
+  <header class="topbar">
     <h1>📷 PhotoPrintHelper</h1>
-    <span class="version">v2.0</span>
-  </div>
-</header>
+    <span>v2.1</span>
+  </header>
 
-<main class="content">
-<section class="panel">
-  <h2>사진 선택</h2>
+  <section class="card">
+    <h2>사진 선택</h2>
 
-  <div class="toolbar">
-    <label class="btn btn-primary">
-      사진 선택
-      <input id="photoInput" type="file" accept="image/*,.heic" multiple hidden>
-    </label>
+    <div class="buttonGroup">
+      <label class="button primary">
+        사진 선택
+        <input id="photoInput" type="file" accept="image/*,.heic" multiple hidden>
+      </label>
 
-    <button id="arrangeBtn" class="btn">A4 배치</button>
-    <button id="printBtn" class="btn">인쇄</button>
-  </div>
-
-  <div class="sizeBox">
-    <div>
-      <label>가로(cm)</label>
-      <input id="photoWidth" type="number" value="3" step="0.1">
+      <button id="arrangeBtn" class="button">A4 배치</button>
+      <button id="printBtn" class="button">인쇄</button>
     </div>
 
-    <div>
-      <label>세로(cm)</label>
-      <input id="photoHeight" type="number" value="3" step="0.1">
+    <div class="sizeGrid">
+      <label>
+        가로(cm)
+        <input id="photoWidth" type="number" value="3" step="0.1" min="0.5">
+      </label>
+
+      <label>
+        세로(cm)
+        <input id="photoHeight" type="number" value="3" step="0.1" min="0.5">
+      </label>
     </div>
-  </div>
-</section>
+  </section>
 
-<section class="panel">
-  <h2>사진 목록</h2>
-  <div id="thumbnailArea" class="thumbnailArea"></div>
-</section>
+  <section class="card">
+    <h2>사진 목록</h2>
+    <div id="thumbs" class="thumbs"></div>
+  </section>
 
-<section class="panel">
-  <div class="previewHeader">
-    <h2>A4 Preview</h2>
-    <div id="statusText">대기중</div>
-  </div>
+  <section class="card">
+    <div class="previewTitle">
+      <h2>A4 Preview</h2>
+      <span id="status">대기중</span>
+    </div>
 
-  <div class="paperContainer">
-    <div id="paper" class="paper"></div>
-  </div>
-</section>
-</main>
+    <div class="paperWrap">
+      <div id="paper" class="paper"></div>
+    </div>
+  </section>
 </div>
 
 <div id="printArea"></div>
