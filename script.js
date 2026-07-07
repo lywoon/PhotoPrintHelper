@@ -1,155 +1,137 @@
 const photoInput = document.getElementById("photoInput");
 const thumbnailArea = document.getElementById("thumbnailArea");
-const preview = document.getElementById("paper");
+const paper = document.getElementById("paper");
+const statusText = document.getElementById("statusText");
 
 const photoWidth = document.getElementById("photoWidth");
 const photoHeight = document.getElementById("photoHeight");
 
-const photoCount = document.getElementById("photoCount");
-const maxCount = document.getElementById("maxCount");
+const arrangeBtn = document.getElementById("arrangeBtn");
+const printBtn = document.getElementById("printBtn");
 
-const statusText = document.getElementById("statusText");
+let photos = [];
 
-const autoArrangeButton =
-document.getElementById("arrangeBtn");
+photoInput.addEventListener("change", loadPhotos);
+arrangeBtn.addEventListener("click", arrangePhotos);
+printBtn.addEventListener("click", () => window.print());
 
-const printButton =
-document.getElementById("printBtn");
+function setStatus(text){
+    statusText.textContent = text;
+}
 
-let imageList = [];
+function clearPreview(){
+    paper.innerHTML = "";
+}
 
-photoInput.addEventListener("change", loadImages);
+async function loadPhotos(e){
 
-autoArrangeButton.addEventListener("click", arrangeImages);
+    photos = [];
 
-printButton.addEventListener("click", () => {
-
-    window.print();
-
-});
-
-function loadImages(e){
-
-    imageList = [];
+    clearPreview();
 
     thumbnailArea.innerHTML = "";
-
-    preview.innerHTML = "";
 
     const files = [...e.target.files];
 
     if(files.length===0){
-
-        updateStatus("사진을 선택하세요.");
-
+        setStatus("사진을 선택하세요.");
         return;
+    }
+
+    setStatus("사진 불러오는 중...");
+
+    for(const file of files){
+
+        const url = URL.createObjectURL(file);
+
+        const img = new Image();
+
+        await new Promise(resolve=>{
+
+            img.onload = resolve;
+
+            img.src = url;
+
+        });
+
+        photos.push(img);
+
+        const thumb = document.createElement("img");
+
+        thumb.className="thumb";
+
+        thumb.src=url;
+
+        thumbnailArea.appendChild(thumb);
 
     }
 
-    photoCount.textContent = files.length;
-
-    updateStatus("사진 불러오는 중...");
-
-    let loaded = 0;
-
-    files.forEach(file=>{
-
-        const reader = new FileReader();
-
-        reader.onload = function(event){
-
-            const img = new Image();
-
-            img.onload=function(){
-
-                imageList.push(img);
-
-                const thumb=document.createElement("img");
-
-                thumb.src=event.target.result;
-
-                thumb.className="thumb";
-
-                thumbnailArea.appendChild(thumb);
-
-                loaded++;
-
-                if(loaded===files.length){
-
-                    updateStatus("사진 불러오기 완료");
-
-                }
-
-            }
-
-            img.src=event.target.result;
-
-        }
-
-        reader.readAsDataURL(file);
-
-    });
-
+    setStatus(`${photos.length}장의 사진을 불러왔습니다.`);
 }
 
-function arrangeImages(){
+function arrangePhotos(){
 
-    preview.innerHTML="";
+    clearPreview();
 
-    if(imageList.length===0){
+    if(photos.length===0){
 
-        updateStatus("사진이 없습니다.");
+        setStatus("사진이 없습니다.");
 
         return;
 
     }
 
-    const cellWidth=parseFloat(photoWidth.value);
+    const w = Number(photoWidth.value);
 
-    const cellHeight=parseFloat(photoHeight.value);
+    const h = Number(photoHeight.value);
 
-    const cols=Math.floor(21/cellWidth);
+    const cols = Math.floor(21 / w);
 
-    const rows=Math.floor(29.7/cellHeight);
+    const rows = Math.floor(29.7 / h);
 
-    const capacity=cols*rows;
+    const max = cols * rows;
 
-    maxCount.textContent=capacity;
+    let x=0;
+    let y=0;
 
-    imageList.forEach((img,index)=>{
+    photos.slice(0,max).forEach(photo=>{
 
-        if(index>=capacity) return;
+        const cell=document.createElement("div");
 
-        const frame=document.createElement("div");
+        cell.className="photoCell";
 
-        frame.className="photoCell";
+        cell.style.width=`${(w/21)*100}%`;
 
-        frame.style.width=(cellWidth/21*100)+"%";
+        cell.style.height=`${(h/29.7)*100}%`;
 
-        frame.style.height=(cellHeight/29.7*100)+"%";
+        cell.style.left=`${(x*w/21)*100}%`;
 
-        frame.style.left=((index%cols)*cellWidth/21*100)+"%";
-
-        frame.style.top=(Math.floor(index/cols)*cellHeight/29.7*100)+"%";
+        cell.style.top=`${(y*h/29.7)*100}%`;
 
         const image=document.createElement("img");
 
-        image.src=img.src;
+        image.src=photo.src;
+
+        image.loading="lazy";
 
         image.draggable=false;
 
-        frame.appendChild(image);
+        cell.appendChild(image);
 
-        preview.appendChild(frame);
+        paper.appendChild(cell);
+
+        x++;
+
+        if(x>=cols){
+
+            x=0;
+
+            y++;
+
+        }
 
     });
 
-    updateStatus("A4 배치 완료");
-
-}
-
-function updateStatus(text){
-
-    statusText.textContent=text;
+    setStatus(`배치 완료 (${Math.min(photos.length,max)}장)`);
 
 }
