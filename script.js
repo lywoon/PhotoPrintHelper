@@ -119,13 +119,6 @@ async function printPaper(){
         return;
     }
 
-    const printArea = document.getElementById("printArea");
-
-    printArea.innerHTML = "";
-
-    const printPaper = document.createElement("div");
-    printPaper.className = "printPaper";
-
     const w = Number(photoWidth.value);
     const h = Number(photoHeight.value);
 
@@ -133,35 +126,97 @@ async function printPaper(){
     const rows = Math.floor(29.7 / h);
     const max = cols * rows;
 
+    let cells = "";
+
     photos.slice(0, max).forEach((photo, index)=>{
 
         const x = index % cols;
         const y = Math.floor(index / cols);
 
-        const cell = document.createElement("div");
-        cell.className = "photoCell";
-
-        cell.style.width = `${(w / 21) * 100}%`;
-        cell.style.height = `${(h / 29.7) * 100}%`;
-        cell.style.left = `${(x * w / 21) * 100}%`;
-        cell.style.top = `${(y * h / 29.7) * 100}%`;
-
-        const image = document.createElement("img");
-        image.src = photo.src;
-        image.draggable = false;
-
-        cell.appendChild(image);
-        printPaper.appendChild(cell);
-
+        cells += `
+            <div class="photoCell"
+                style="
+                    width:${(w / 21) * 100}%;
+                    height:${(h / 29.7) * 100}%;
+                    left:${(x * w / 21) * 100}%;
+                    top:${(y * h / 29.7) * 100}%;
+                ">
+                <img src="${photo.src}">
+            </div>
+        `;
     });
 
-    printArea.appendChild(printPaper);
+    const printHtml = `
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>PhotoPrintHelper Print</title>
+<style>
+@page{
+    size:A4;
+    margin:0;
+}
 
-    await waitForImages(printArea);
+html,body{
+    margin:0;
+    padding:0;
+    width:210mm;
+    height:297mm;
+    overflow:hidden;
+    background:white;
+}
 
-    setTimeout(()=>{
+.paper{
+    position:relative;
+    width:209mm;
+    height:296mm;
+    overflow:hidden;
+    background:white;
+}
+
+.photoCell{
+    position:absolute;
+    border:.2mm solid #999;
+    overflow:hidden;
+    box-sizing:border-box;
+    background:white;
+}
+
+.photoCell img{
+    width:100%;
+    height:100%;
+    object-fit:contain;
+    display:block;
+    background:white;
+}
+</style>
+</head>
+<body>
+<div class="paper">
+${cells}
+</div>
+<script>
+window.onload = function(){
+    setTimeout(function(){
         window.print();
-    }, 300);
+    }, 500);
+};
+<\/script>
+</body>
+</html>`;
+
+    const printWindow = window.open("", "_blank");
+
+    if(!printWindow){
+        setStatus("팝업이 차단되었습니다.");
+        return;
+    }
+
+    printWindow.document.open();
+    printWindow.document.write(printHtml);
+    printWindow.document.close();
 }
 
 function waitForImages(root){
