@@ -78,17 +78,14 @@ async function loadPhotos(event){
 function getLayout(){
   const w = Number(photoWidth.value);
   const h = Number(photoHeight.value);
-
   const cols = Math.max(1, Math.floor(21 / w));
   const rows = Math.max(1, Math.floor(29.7 / h));
   const max = cols * rows;
-
   return {w,h,cols,rows,max};
 }
 
 function makeCells(target){
   target.innerHTML = "";
-
   const {w,h,cols,max} = getLayout();
 
   photos.slice(0,max).forEach((photo,index)=>{
@@ -140,8 +137,9 @@ async function printPhotos(){
   printArea.appendChild(printPaper);
 
   makeCells(printPaper);
-
   await waitImages(printArea);
+
+  document.body.classList.add("printing");
 
   setTimeout(()=>{
     window.print();
@@ -162,6 +160,7 @@ function waitImages(root){
 }
 
 function restore(){
+  document.body.classList.remove("printing");
   printArea.innerHTML = "";
 
   if(photos.length > 0 && paper.children.length === 0){
