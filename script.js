@@ -5,26 +5,20 @@ const statusEl = document.getElementById("status");
 const photoWidth = document.getElementById("photoWidth");
 const photoHeight = document.getElementById("photoHeight");
 const arrangeBtn = document.getElementById("arrangeBtn");
-const preparePrintBtn = document.getElementById("preparePrintBtn");
-const openPrintBtn = document.getElementById("openPrintBtn");
+const printBtn = document.getElementById("printBtn");
+const resetBtn = document.getElementById("resetBtn");
 const printArea = document.getElementById("printArea");
 
 let photos = [];
 let isPrinting = false;
-let isPrintPrepared = false;
 
 photoInput.addEventListener("change", loadPhotos);
 arrangeBtn.addEventListener("click", arrangePhotos);
-preparePrintBtn.addEventListener("click", preparePrint);
-openPrintBtn.addEventListener("click", openPrintPreview);
+printBtn.addEventListener("click", printPhotos);
+resetBtn.addEventListener("click", resetWork);
 
 function setStatus(text){
   statusEl.textContent = text;
-}
-
-function setPrintReady(ready){
-  isPrintPrepared = ready;
-  openPrintBtn.hidden = !ready;
 }
 
 function readFile(file){
@@ -50,7 +44,6 @@ async function loadPhotos(event){
   thumbs.innerHTML = "";
   paper.innerHTML = "";
   printArea.innerHTML = "";
-  setPrintReady(false);
 
   const files = Array.from(event.target.files);
 
@@ -121,8 +114,6 @@ function makeCells(target){
 }
 
 function arrangePhotos(){
-  setPrintReady(false);
-
   if(photos.length === 0){
     setStatus("사진이 없습니다");
     return;
@@ -132,7 +123,7 @@ function arrangePhotos(){
   setStatus(`사진 ${placed}장 배치 완료`);
 }
 
-async function preparePrint(){
+async function printPhotos(){
   if(photos.length === 0){
     setStatus("사진이 없습니다");
     return;
@@ -151,20 +142,14 @@ async function preparePrint(){
   makeCells(printPaper);
   await waitImages(printArea);
 
-  setPrintReady(true);
-  setStatus("인쇄 준비 완료");
-}
-
-function openPrintPreview(){
-  if(!isPrintPrepared){
-    setStatus("먼저 인쇄 준비를 눌러주세요");
-    return;
-  }
-
   isPrinting = true;
   document.body.classList.add("printing");
 
-  window.print();
+  setStatus("인쇄 준비 완료");
+
+  setTimeout(()=>{
+    window.print();
+  },600);
 }
 
 function waitImages(root){
@@ -185,6 +170,7 @@ function restoreAfterPrint(){
 
   isPrinting = false;
   document.body.classList.remove("printing");
+  printArea.innerHTML = "";
 
   if(photos.length > 0 && paper.children.length === 0){
     arrangePhotos();
@@ -209,4 +195,14 @@ if(window.matchMedia){
       }
     });
   }
+}
+
+
+function resetWork(){
+  photos = [];
+  thumbs.innerHTML = "";
+  paper.innerHTML = "";
+  printArea.innerHTML = "";
+  photoInput.value = "";
+  setStatus("배치 전");
 }
