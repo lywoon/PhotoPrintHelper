@@ -77,6 +77,12 @@ html,body{
   color:white;
 }
 
+.button.printReady{
+  background:#12a150;
+  color:white;
+  font-weight:700;
+}
+
 .sizeGrid{
   display:grid;
   grid-template-columns:1fr 1fr;
