@@ -3,14 +3,14 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>PhotoPrintHelper v3.5</title>
-<link rel="stylesheet" href="style.css?v=35">
+<title>PhotoPrintHelper v3.6</title>
+<link rel="stylesheet" href="style.css?v=36">
 </head>
 <body>
 <div class="app" id="app">
   <header class="topbar">
     <h1>📷 PhotoPrintHelper</h1>
-    <span>v3.5</span>
+    <span>v3.6</span>
   </header>
 
   <section class="card">
@@ -21,7 +21,8 @@
       <input id="photoInput" type="file" accept="image/*,.heic,.heif" multiple hidden>
 
       <button id="arrangeBtn" class="button" type="button">A4 배치</button>
-      <button id="printBtn" class="button" type="button">인쇄</button>
+      <button id="preparePrintBtn" class="button" type="button">인쇄 준비</button>
+      <button id="openPrintBtn" class="button printReady" type="button" hidden>인쇄 미리보기 열기</button>
     </div>
 
     <div class="sizeGrid">
@@ -55,6 +56,6 @@
 
 <div id="printArea"></div>
 
-<script src="script.js?v=35"></script>
+<script src="script.js?v=36"></script>
 </body>
 </html>
