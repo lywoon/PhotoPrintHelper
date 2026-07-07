@@ -148,3 +148,22 @@ window.addEventListener("afterprint", ()=>{
     const printArea = document.getElementById("printArea");
     printArea.innerHTML = "";
 });
+
+window.addEventListener("focus", restoreScreen);
+document.addEventListener("visibilitychange", () => {
+    if(!document.hidden){
+        restoreScreen();
+    }
+});
+
+function restoreScreen(){
+    const printArea = document.getElementById("printArea");
+
+    if(printArea){
+        printArea.innerHTML = "";
+    }
+
+    if(photos.length > 0 && paper.children.length === 0){
+        arrangePhotos();
+    }
+}
