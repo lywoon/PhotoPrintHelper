@@ -77,10 +77,9 @@ html,body{
   color:white;
 }
 
-.button.printReady{
-  background:#12a150;
-  color:white;
-  font-weight:700;
+.resetButton{
+  background:#f2f3f5;
+  color:#777;
 }
 
 .sizeGrid{
