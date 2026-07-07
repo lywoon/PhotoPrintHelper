@@ -134,13 +134,17 @@ async function printPhotos(){
     arrangePhotos();
   }
 
+  setStatus("인쇄 이미지 생성 중...");
+
+  const dataUrl = await createPrintImage();
+
   printArea.innerHTML = "";
 
-  const printPaper = document.createElement("div");
-  printPaper.className = "printPaper";
-  printArea.appendChild(printPaper);
+  const image = document.createElement("img");
+  image.className = "printImage";
+  image.src = dataUrl;
+  printArea.appendChild(image);
 
-  makeCells(printPaper);
   await waitImages(printArea);
 
   isPrinting = true;
@@ -152,6 +156,60 @@ async function printPhotos(){
   setTimeout(()=>{
     window.print();
   },600);
+}
+
+async function createPrintImage(){
+  const {w,h,cols,max} = getLayout();
+
+  const canvas = document.createElement("canvas");
+
+  /* A4 비율 고정: 185mm x 261.6mm 인쇄영역에 맞춘 고해상도 이미지 */
+  canvas.width = 1850;
+  canvas.height = 2616;
+
+  const ctx = canvas.getContext("2d");
+  ctx.fillStyle = "#ffffff";
+  ctx.fillRect(0,0,canvas.width,canvas.height);
+
+  const pxPerCmX = canvas.width / 21;
+  const pxPerCmY = canvas.height / 29.7;
+
+  for(let i=0; i<Math.min(photos.length,max); i++){
+    const photo = photos[i];
+    const img = await loadImage(photo.src);
+
+    const x = (i % cols) * w * pxPerCmX;
+    const y = Math.floor(i / cols) * h * pxPerCmY;
+    const cellW = w * pxPerCmX;
+    const cellH = h * pxPerCmY;
+
+    ctx.save();
+    ctx.strokeStyle = "#999999";
+    ctx.lineWidth = 2;
+    ctx.strokeRect(x,y,cellW,cellH);
+
+    const imgRatio = img.naturalWidth / img.naturalHeight;
+    const cellRatio = cellW / cellH;
+
+    let drawW, drawH, drawX, drawY;
+
+    if(imgRatio > cellRatio){
+      drawW = cellW;
+      drawH = cellW / imgRatio;
+      drawX = x;
+      drawY = y + (cellH - drawH) / 2;
+    }else{
+      drawH = cellH;
+      drawW = cellH * imgRatio;
+      drawX = x + (cellW - drawW) / 2;
+      drawY = y;
+    }
+
+    ctx.drawImage(img, drawX, drawY, drawW, drawH);
+    ctx.restore();
+  }
+
+  return canvas.toDataURL("image/jpeg",0.96);
 }
 
 function waitImages(root){
@@ -182,6 +240,15 @@ function restoreAfterPrint(){
   printArea.innerHTML = "";
 }
 
+function resetWork(){
+  photos = [];
+  thumbs.innerHTML = "";
+  paper.innerHTML = "";
+  printArea.innerHTML = "";
+  photoInput.value = "";
+  setStatus("배치 전");
+}
+
 window.addEventListener("afterprint", restoreAfterPrint);
 
 if(window.matchMedia){
@@ -200,14 +267,4 @@ if(window.matchMedia){
       }
     });
   }
-}
-
-
-function resetWork(){
-  photos = [];
-  thumbs.innerHTML = "";
-  paper.innerHTML = "";
-  printArea.innerHTML = "";
-  photoInput.value = "";
-  setStatus("배치 전");
 }
