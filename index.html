@@ -14,36 +14,37 @@ content="width=device-width,initial-scale=1.0,viewport-fit=cover">
 
 <body>
 
-<div class="container">
+<div class="app">
 
-<header class="header">
+<header class="topbar">
 
-<div>
+<div class="titleArea">
 
 <h1>📷 PhotoPrintHelper</h1>
 
-<div class="version">
-v2.0
-</div>
+<span class="version">v2.0</span>
 
 </div>
 
 </header>
 
 
-<section class="card">
+<main class="content">
+
+
+<section class="panel">
 
 <h2>사진 선택</h2>
 
-<div class="buttonRow">
+<div class="toolbar">
 
-<label class="primaryButton">
+<label class="btn btn-primary">
 
 사진 선택
 
 <input
-type="file"
 id="photoInput"
+type="file"
 accept="image/*,.heic"
 multiple
 hidden>
@@ -51,16 +52,16 @@ hidden>
 </label>
 
 <button
-id="autoArrangeButton"
-class="secondaryButton">
+id="arrangeBtn"
+class="btn">
 
-A4 자동 배치
+A4 배치
 
 </button>
 
 <button
-id="printButton"
-class="secondaryButton">
+id="printBtn"
+class="btn">
 
 인쇄
 
@@ -68,13 +69,8 @@ class="secondaryButton">
 
 </div>
 
-</section>
 
-
-
-<section class="card">
-
-<div class="sizeGrid">
+<div class="sizeBox">
 
 <div>
 
@@ -85,10 +81,9 @@ class="secondaryButton">
 </label>
 
 <input
-type="number"
 id="photoWidth"
-value="2"
-min="1"
+type="number"
+value="3.5"
 step="0.1">
 
 </div>
@@ -102,10 +97,9 @@ step="0.1">
 </label>
 
 <input
-type="number"
 id="photoHeight"
-value="2"
-min="1"
+type="number"
+value="4.5"
 step="0.1">
 
 </div>
@@ -116,55 +110,9 @@ step="0.1">
 
 
 
-<section class="card statusCard">
+<section class="panel">
 
-<div class="statusRow">
-
-<div>
-
-사진
-
-<span id="photoCount">
-
-0
-
-</span>
-
-장
-
-</div>
-
-<div>
-
-A4 최대
-
-<span id="maxCount">
-
-0
-
-</span>
-
-장
-
-</div>
-
-</div>
-
-<div
-id="statusText"
-class="status">
-
-대기중
-
-</div>
-
-</section>
-
-
-
-<section class="card">
-
-<h2>선택한 사진</h2>
+<h2>사진 목록</h2>
 
 <div
 id="thumbnailArea"
@@ -176,21 +124,36 @@ class="thumbnailArea">
 
 
 
-<section class="card print">
+<section class="panel">
 
-<h2>A4 미리보기</h2>
+<div class="previewHeader">
 
-<div class="previewWrapper">
+<h2>A4 Preview</h2>
 
 <div
-id="a4Preview"
-class="preview">
+id="statusText">
+
+대기중
+
+</div>
+
+</div>
+
+
+<div class="paperContainer">
+
+<div
+id="paper"
+class="paper">
 
 </div>
 
 </div>
 
 </section>
+
+
+</main>
 
 </div>
 
