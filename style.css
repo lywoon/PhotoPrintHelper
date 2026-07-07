@@ -169,17 +169,20 @@ html,body{
 
 @media print{
   @page{
-    size:A4;
+    size:A4 portrait;
     margin:0;
   }
 
-  html,body{
+  html,
+  body{
     margin:0 !important;
     padding:0 !important;
-    background:white !important;
+    width:100% !important;
+    height:100% !important;
+    min-height:0 !important;
+    max-height:100% !important;
     overflow:hidden !important;
-    width:210mm !important;
-    height:296mm !important;
+    background:white !important;
   }
 
   body.printing .app{
@@ -191,22 +194,36 @@ html,body{
     position:fixed !important;
     left:0 !important;
     top:0 !important;
-    width:205mm !important;
-    height:289mm !important;
+    width:185mm !important;
+    height:261.6mm !important;
+    max-height:261.6mm !important;
     overflow:hidden !important;
     background:white !important;
     margin:0 !important;
     padding:0 !important;
+    page-break-before:avoid !important;
+    page-break-after:avoid !important;
+    page-break-inside:avoid !important;
+    break-before:avoid !important;
+    break-after:avoid !important;
+    break-inside:avoid !important;
   }
 
   body.printing #printArea .printPaper{
     position:relative !important;
-    width:205mm !important;
-    height:289mm !important;
+    width:185mm !important;
+    height:261.6mm !important;
+    max-height:261.6mm !important;
     overflow:hidden !important;
     background:white !important;
     margin:0 !important;
     padding:0 !important;
+    page-break-before:avoid !important;
+    page-break-after:avoid !important;
+    page-break-inside:avoid !important;
+    break-before:avoid !important;
+    break-after:avoid !important;
+    break-inside:avoid !important;
   }
 
   body.printing #printArea .photoCell{
