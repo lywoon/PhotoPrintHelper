@@ -169,3 +169,17 @@ window.addEventListener("afterprint", () => {
     });
 
 });
+
+document.addEventListener("visibilitychange", () => {
+
+    if (!document.hidden) {
+
+        setTimeout(() => {
+
+            arrangePhotos();
+
+        }, 100);
+
+    }
+
+});
