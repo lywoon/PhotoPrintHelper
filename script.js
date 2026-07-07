@@ -119,48 +119,73 @@ async function printPaper(){
         return;
     }
 
-    const printArea = document.getElementById("printArea");
-    printArea.innerHTML = "";
-
-    const printPaper = document.createElement("div");
-    printPaper.className = "printPaper";
-
     const w = Number(photoWidth.value);
     const h = Number(photoHeight.value);
+
+    const canvas = document.createElement("canvas");
+    canvas.width = 1240;
+    canvas.height = 1754;
+
+    const ctx = canvas.getContext("2d");
+
+    ctx.fillStyle = "white";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
 
     const cols = Math.floor(21 / w);
     const rows = Math.floor(29.7 / h);
     const max = cols * rows;
 
-    photos.slice(0, max).forEach((photo, index)=>{
+    const pxPerCmX = canvas.width / 21;
+    const pxPerCmY = canvas.height / 29.7;
 
-        const x = index % cols;
-        const y = Math.floor(index / cols);
+    for(let i = 0; i < Math.min(photos.length, max); i++){
 
-        const cell = document.createElement("div");
-        cell.className = "photoCell";
+        const photo = photos[i];
 
-        cell.style.width = `${(w / 21) * 100}%`;
-        cell.style.height = `${(h / 29.7) * 100}%`;
-        cell.style.left = `${(x * w / 21) * 100}%`;
-        cell.style.top = `${(y * h / 29.7) * 100}%`;
+        const img = await loadImage(photo.src);
 
-        const image = document.createElement("img");
-        image.src = photo.src;
-        image.draggable = false;
+        const x = (i % cols) * w * pxPerCmX;
+        const y = Math.floor(i / cols) * h * pxPerCmY;
+        const cw = w * pxPerCmX;
+        const ch = h * pxPerCmY;
 
-        cell.appendChild(image);
-        printPaper.appendChild(cell);
+        ctx.strokeStyle = "#999";
+        ctx.lineWidth = 2;
+        ctx.strokeRect(x, y, cw, ch);
 
-    });
+        const imgRatio = img.naturalWidth / img.naturalHeight;
+        const cellRatio = cw / ch;
 
-    printArea.appendChild(printPaper);
+        let drawW, drawH, drawX, drawY;
 
-    await waitForImages(printArea);
+        if(imgRatio > cellRatio){
+            drawW = cw;
+            drawH = cw / imgRatio;
+            drawX = x;
+            drawY = y + (ch - drawH) / 2;
+        }else{
+            drawH = ch;
+            drawW = ch * imgRatio;
+            drawX = x + (cw - drawW) / 2;
+            drawY = y;
+        }
+
+        ctx.drawImage(img, drawX, drawY, drawW, drawH);
+    }
+
+    const printArea = document.getElementById("printArea");
+    printArea.innerHTML = "";
+
+    const img = document.createElement("img");
+    img.src = canvas.toDataURL("image/jpeg", 0.95);
+    img.className = "printImage";
+
+    printArea.appendChild(img);
 
     setTimeout(()=>{
         window.print();
-    }, 300);
+    }, 500);
+}
 }
 
 function waitForImages(root){
