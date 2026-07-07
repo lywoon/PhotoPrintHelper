@@ -185,52 +185,53 @@ body{
 
 @media print{
 
-body>*{
+html,
+body{
+    width:210mm;
+    height:297mm;
+    margin:0 !important;
+    padding:0 !important;
+    background:white !important;
+    overflow:hidden !important;
+}
+
+.app{
     display:none !important;
 }
 
 #printArea{
-
     display:block !important;
-
-    position:fixed;
-
-    left:0;
-
-    top:0;
-
-    width:210mm;
-
-    height:297mm;
-
+    width:210mm !important;
+    height:297mm !important;
+    margin:0 !important;
+    padding:0 !important;
+    overflow:hidden !important;
 }
 
-#printArea .paper{
-
-    width:210mm;
-
-    height:297mm;
-
-    border:none;
-
-    box-shadow:none;
-
-    margin:0;
-
+.printPaper{
+    position:relative;
+    width:210mm !important;
+    height:297mm !important;
+    background:white !important;
+    overflow:hidden !important;
 }
 
-.photoCell{
-
+#printArea .photoCell{
+    position:absolute;
     border:.2mm solid #999;
+    overflow:hidden;
+}
 
+#printArea .photoCell img{
+    width:100%;
+    height:100%;
+    object-fit:contain;
+    background:white;
 }
 
 @page{
-
     size:A4;
-
     margin:0;
-
 }
 
 }
