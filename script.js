@@ -13,7 +13,27 @@ let photos = [];
 
 photoInput.addEventListener("change", loadPhotos);
 arrangeBtn.addEventListener("click", arrangePhotos);
-printBtn.addEventListener("click", () => window.print());
+printBtn.addEventListener("click",printPaper);
+
+function printPaper(){
+
+    const printArea=document.getElementById("printArea");
+
+    printArea.innerHTML="";
+
+    const clone=paper.cloneNode(true);
+
+    printArea.appendChild(clone);
+
+    window.print();
+
+    setTimeout(()=>{
+
+        printArea.innerHTML="";
+
+    },300);
+
+}
 
 function setStatus(text){
     statusText.textContent = text;
