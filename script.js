@@ -143,7 +143,7 @@ async function printPhotos(){
 
   setTimeout(()=>{
     window.print();
-  },500);
+  },600);
 }
 
 function waitImages(root){
