@@ -155,3 +155,17 @@ function arrangePhotos(){
     setStatus(`배치 완료 (${Math.min(photos.length,max)}장)`);
 
 }
+
+window.addEventListener("afterprint", () => {
+
+    const printArea = document.getElementById("printArea");
+
+    printArea.innerHTML = "";
+
+    requestAnimationFrame(() => {
+
+        arrangePhotos();
+
+    });
+
+});
