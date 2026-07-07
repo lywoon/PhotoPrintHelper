@@ -133,7 +133,7 @@ body{
 }
 
 .paper{
-    width:min(95vw,420px);
+    width:min(92vw,520px);
     aspect-ratio:210/297;
     background:white;
     border:1px solid #999;
