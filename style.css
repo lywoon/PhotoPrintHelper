@@ -65,6 +65,8 @@ html,body{
   justify-content:center;
   text-align:center;
   cursor:pointer;
+  appearance:none;
+  -webkit-appearance:none;
 }
 
 .button.primary{
@@ -176,7 +178,7 @@ html,body{
   #printArea{
     display:block !important;
     width:210mm !important;
-    height:297mm !important;
+    height:296mm !important;
     margin:0 !important;
     padding:0 !important;
     overflow:hidden !important;
@@ -185,8 +187,8 @@ html,body{
 
   #printArea .printPaper{
     position:relative;
-    width:209mm;
-    height:296mm;
+    width:208mm;
+    height:294mm;
     overflow:hidden;
     background:white;
   }
