@@ -1,6 +1,6 @@
 const photoInput = document.getElementById("photoInput");
 const thumbnailArea = document.getElementById("thumbnailArea");
-const preview = document.getElementById("a4Preview");
+const preview = document.getElementById("paper");
 
 const photoWidth = document.getElementById("photoWidth");
 const photoHeight = document.getElementById("photoHeight");
@@ -11,10 +11,10 @@ const maxCount = document.getElementById("maxCount");
 const statusText = document.getElementById("statusText");
 
 const autoArrangeButton =
-document.getElementById("autoArrangeButton");
+document.getElementById("arrangeBtn");
 
 const printButton =
-document.getElementById("printButton");
+document.getElementById("printBtn");
 
 let imageList = [];
 
