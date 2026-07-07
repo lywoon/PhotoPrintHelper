@@ -11,6 +11,7 @@ const printArea = document.getElementById("printArea");
 
 let photos = [];
 let isPrinting = false;
+let shouldResetAfterPrint = false;
 
 photoInput.addEventListener("change", loadPhotos);
 arrangeBtn.addEventListener("click", arrangePhotos);
@@ -143,6 +144,7 @@ async function printPhotos(){
   await waitImages(printArea);
 
   isPrinting = true;
+  shouldResetAfterPrint = true;
   document.body.classList.add("printing");
 
   setStatus("인쇄 준비 완료");
@@ -166,15 +168,18 @@ function waitImages(root){
 }
 
 function restoreAfterPrint(){
-  if(!isPrinting) return;
+  if(!isPrinting && !shouldResetAfterPrint) return;
 
   isPrinting = false;
   document.body.classList.remove("printing");
-  printArea.innerHTML = "";
 
-  if(photos.length > 0 && paper.children.length === 0){
-    arrangePhotos();
+  if(shouldResetAfterPrint){
+    shouldResetAfterPrint = false;
+    resetWork();
+    return;
   }
+
+  printArea.innerHTML = "";
 }
 
 window.addEventListener("afterprint", restoreAfterPrint);
