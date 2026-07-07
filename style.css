@@ -206,21 +206,12 @@ html,body{
     background:white !important;
     margin:0 !important;
     padding:0 !important;
-    page-break-before:avoid !important;
-    page-break-after:avoid !important;
-    page-break-inside:avoid !important;
-    break-before:avoid !important;
-    break-after:avoid !important;
-    break-inside:avoid !important;
   }
 
-  body.printing #printArea .printPaper{
-    position:relative !important;
+  body.printing #printArea img.printImage{
+    display:block !important;
     width:185mm !important;
-    height:269.6mm !important;
-    max-height:269.6mm !important;
-    overflow:hidden !important;
-    background:white !important;
+    height:auto !important;
     margin:0 !important;
     padding:0 !important;
     page-break-before:avoid !important;
@@ -229,20 +220,5 @@ html,body{
     break-before:avoid !important;
     break-after:avoid !important;
     break-inside:avoid !important;
-  }
-
-  body.printing #printArea .photoCell{
-    position:absolute !important;
-    border:.2mm solid #999 !important;
-    overflow:hidden !important;
-    background:white !important;
-  }
-
-  body.printing #printArea .photoCell img{
-    width:100% !important;
-    height:100% !important;
-    object-fit:contain !important;
-    display:block !important;
-    background:white !important;
   }
 }
