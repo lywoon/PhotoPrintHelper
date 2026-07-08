@@ -13,6 +13,10 @@ let photos = [];
 let isPrinting = false;
 let shouldResetAfterPrint = false;
 
+const A4_W_CM = 21;
+const A4_H_CM = 29.7;
+const SAFE_MARGIN_CM = 0.6;
+
 photoInput.addEventListener("change", loadPhotos);
 arrangeBtn.addEventListener("click", arrangePhotos);
 printBtn.addEventListener("click", printPhotos);
@@ -82,15 +86,20 @@ async function loadPhotos(event){
 function getLayout(){
   const w = Number(photoWidth.value);
   const h = Number(photoHeight.value);
-  const cols = Math.max(1, Math.floor(21 / w));
-  const rows = Math.max(1, Math.floor(29.7 / h));
+
+  const usableW = A4_W_CM - SAFE_MARGIN_CM * 2;
+  const usableH = A4_H_CM - SAFE_MARGIN_CM * 2;
+
+  const cols = Math.max(1, Math.floor(usableW / w));
+  const rows = Math.max(1, Math.floor(usableH / h));
   const max = cols * rows;
-  return {w,h,cols,rows,max};
+
+  return {w,h,cols,rows,max,margin:SAFE_MARGIN_CM};
 }
 
 function makeCells(target){
   target.innerHTML = "";
-  const {w,h,cols,max} = getLayout();
+  const {w,h,cols,max,margin} = getLayout();
 
   photos.slice(0,max).forEach((photo,index)=>{
     const x = index % cols;
@@ -98,10 +107,10 @@ function makeCells(target){
 
     const cell = document.createElement("div");
     cell.className = "photoCell";
-    cell.style.width = `${(w / 21) * 100}%`;
-    cell.style.height = `${(h / 29.7) * 100}%`;
-    cell.style.left = `${(x * w / 21) * 100}%`;
-    cell.style.top = `${(y * h / 29.7) * 100}%`;
+    cell.style.width = `${(w / A4_W_CM) * 100}%`;
+    cell.style.height = `${(h / A4_H_CM) * 100}%`;
+    cell.style.left = `${((margin + x * w) / A4_W_CM) * 100}%`;
+    cell.style.top = `${((margin + y * h) / A4_H_CM) * 100}%`;
 
     const img = document.createElement("img");
     img.src = photo.src;
@@ -159,11 +168,9 @@ async function printPhotos(){
 }
 
 async function createPrintImage(){
-  const {w,h,cols,max} = getLayout();
+  const {w,h,cols,max,margin} = getLayout();
 
   const canvas = document.createElement("canvas");
-
-  /* A4 비율 고정: 185mm x 261.6mm 인쇄영역에 맞춘 고해상도 이미지 */
   canvas.width = 1850;
   canvas.height = 2616;
 
@@ -171,15 +178,15 @@ async function createPrintImage(){
   ctx.fillStyle = "#ffffff";
   ctx.fillRect(0,0,canvas.width,canvas.height);
 
-  const pxPerCmX = canvas.width / 21;
-  const pxPerCmY = canvas.height / 29.7;
+  const pxPerCmX = canvas.width / A4_W_CM;
+  const pxPerCmY = canvas.height / A4_H_CM;
 
   for(let i=0; i<Math.min(photos.length,max); i++){
     const photo = photos[i];
     const img = await loadImage(photo.src);
 
-    const x = (i % cols) * w * pxPerCmX;
-    const y = Math.floor(i / cols) * h * pxPerCmY;
+    const x = (margin + (i % cols) * w) * pxPerCmX;
+    const y = (margin + Math.floor(i / cols) * h) * pxPerCmY;
     const cellW = w * pxPerCmX;
     const cellH = h * pxPerCmY;
 
