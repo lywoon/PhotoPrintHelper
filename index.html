@@ -3,14 +3,16 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>PhotoPrintHelper v4.4</title>
-<link rel="stylesheet" href="style.css?v=44">
+<title>PhotoPrintHelper v4.5</title>
+<link rel="stylesheet" href="style.css?v=45">
 </head>
 <body>
 <div class="app" id="app">
   <header class="topbar">
-    <h1>📷 PhotoPrintHelper</h1><span>v4.4</span>
+    <h1>📷 PhotoPrintHelper</h1>
+    <span>v4.5</span>
   </header>
+
   <section class="card">
     <h2>사진 선택</h2>
     <div class="buttonGroup">
@@ -19,20 +21,35 @@
       <button id="printBtn" class="button" type="button" disabled>인쇄</button>
       <button id="resetBtn" class="button resetButton" type="button">작업 초기화</button>
     </div>
+
     <div class="sizeGrid">
       <label>가로(cm)<input id="photoWidth" type="number" value="3" step="0.1" min="0.5"></label>
       <label>세로(cm)<input id="photoHeight" type="number" value="3" step="0.1" min="0.5"></label>
     </div>
   </section>
-  <section class="card"><h2>사진 목록</h2><div id="thumbs" class="thumbs"></div></section>
+
   <section class="card">
-    <div class="previewTitle"><h2>사진 배치 미리보기</h2><span id="status">배치 전</span></div>
+    <h2>사진 목록</h2>
+    <div id="thumbs" class="thumbs"></div>
+  </section>
+
+  <section class="card">
+    <div class="previewTitle">
+      <h2>사진 배치 미리보기</h2>
+      <span id="status">배치 전</span>
+    </div>
     <div id="metaInfo" class="metaInfo">사진 0장 / 최대 0장 · 출력 크기 3 × 3 cm</div>
     <div class="paperWrap"><div id="paper" class="paper"></div></div>
   </section>
 </div>
+
 <div id="printArea"></div>
-<div id="printExitPanel"><button id="exitPrintBtn" type="button">새 작업 시작</button></div>
-<script src="script.js?v=44"></script>
+
+<div id="printReturnPanel">
+  <button id="returnBtnTop" type="button">새 작업 시작</button>
+  <p>인쇄창을 닫은 뒤 이 버튼을 눌러 다음 작업을 시작하세요.</p>
+</div>
+
+<script src="script.js?v=45"></script>
 </body>
 </html>
