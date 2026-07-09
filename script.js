@@ -102,6 +102,6 @@ function waitImages(root){
   return Promise.all(imgs.map(img=>img.complete&&img.naturalWidth>0?Promise.resolve():new Promise(res=>{img.onload=res;img.onerror=res})));
 }
 
-function enterPrintMode(){document.body.classList.add("printOnly")}
+function enterPrintMode(){document.body.classList.add("printOnly");window.scrollTo(0,0)}
 function exitPrintMode(){document.body.classList.remove("printOnly");printArea.innerHTML=""}
-function resetWork(){photos=[];thumbs.innerHTML="";paper.innerHTML="";printArea.innerHTML="";photoInput.value="";document.body.classList.remove("printOnly");setStatus("배치 전");setPrintEnabled(false);updateMeta()}
+function resetWork(){photos=[];thumbs.innerHTML="";paper.innerHTML="";printArea.innerHTML="";photoInput.value="";document.body.classList.remove("printOnly");setStatus("배치 전");setPrintEnabled(false);updateMeta();window.scrollTo(0,0)}
