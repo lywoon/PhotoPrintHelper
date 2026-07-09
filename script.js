@@ -1,18 +1,107 @@
-const photoInput=document.getElementById("photoInput"),thumbs=document.getElementById("thumbs"),paper=document.getElementById("paper"),statusEl=document.getElementById("status"),metaInfo=document.getElementById("metaInfo"),photoWidth=document.getElementById("photoWidth"),photoHeight=document.getElementById("photoHeight"),printBtn=document.getElementById("printBtn"),resetBtn=document.getElementById("resetBtn"),printArea=document.getElementById("printArea"),exitPrintBtn=document.getElementById("exitPrintBtn");
-let photos=[],printModeActive=false;const A4_W_CM=21,A4_H_CM=29.7,SAFE_MARGIN_CM=.6;
-photoInput.addEventListener("change",loadPhotos);printBtn.addEventListener("click",printPhotos);resetBtn.addEventListener("click",resetWork);exitPrintBtn.addEventListener("click",resetWork);photoWidth.addEventListener("change",autoRearrange);photoHeight.addEventListener("change",autoRearrange);photoWidth.addEventListener("blur",autoRearrange);photoHeight.addEventListener("blur",autoRearrange);window.addEventListener("pageshow",()=>{if(printModeActive){exitPrintMode();resetWork();}});updateMeta();setPrintEnabled(false);
-function setStatus(t){statusEl.textContent=t}function setPrintEnabled(e){printBtn.disabled=!e}
-function readFile(file){return new Promise((resolve,reject)=>{const reader=new FileReader();reader.onload=()=>resolve(reader.result);reader.onerror=reject;reader.readAsDataURL(file);});}
-function loadImage(src){return new Promise(resolve=>{const img=new Image();img.onload=()=>resolve(img);img.onerror=()=>resolve(img);img.src=src;});}
-async function loadPhotos(event){exitPrintMode();photos=[];thumbs.innerHTML="";paper.innerHTML="";setPrintEnabled(false);const files=Array.from(event.target.files);if(files.length===0){setStatus("배치 전");updateMeta();return;}setStatus(`사진 불러오는 중... 0/${files.length}`);let loaded=0;for(const file of files){try{const src=await readFile(file);const img=await loadImage(src);photos.push({src,width:img.naturalWidth,height:img.naturalHeight});const thumb=document.createElement("img");thumb.className="thumb";thumb.src=src;thumbs.appendChild(thumb);loaded++;setStatus(`사진 불러오는 중... ${loaded}/${files.length}`);}catch(e){console.error(e)}}photoInput.value="";arrangePhotos();}
-function getLayout(){const w=Number(photoWidth.value),h=Number(photoHeight.value),usableW=A4_W_CM-SAFE_MARGIN_CM*2,usableH=A4_H_CM-SAFE_MARGIN_CM*2,cols=Math.max(1,Math.floor(usableW/w)),rows=Math.max(1,Math.floor(usableH/h)),max=cols*rows;return{w,h,cols,rows,max,margin:SAFE_MARGIN_CM};}
-function updateMeta(){const{w,h,max}=getLayout(),count=photos.length,notPlaced=Math.max(0,count-max);let text=`사진 ${count}장 / 최대 ${max}장 · 출력 크기 ${w} × ${h} cm`;if(notPlaced>0)text+=` · ${notPlaced}장 미배치`;metaInfo.textContent=text;}
-function makeCells(target){target.innerHTML="";const{w,h,cols,max,margin}=getLayout();photos.slice(0,max).forEach((photo,index)=>{const x=index%cols,y=Math.floor(index/cols),cell=document.createElement("div");cell.className="photoCell";cell.style.width=`${w/A4_W_CM*100}%`;cell.style.height=`${h/A4_H_CM*100}%`;cell.style.left=`${(margin+x*w)/A4_W_CM*100}%`;cell.style.top=`${(margin+y*h)/A4_H_CM*100}%`;const img=document.createElement("img");img.src=photo.src;img.draggable=false;cell.appendChild(img);target.appendChild(cell);});return Math.min(photos.length,max);}
-function arrangePhotos(){exitPrintMode();updateMeta();if(photos.length===0){setStatus("배치 전");setPrintEnabled(false);return;}const placed=makeCells(paper);setStatus(`사진 ${placed}장 배치 완료`);setPrintEnabled(true);}
-function autoRearrange(){if(photos.length>0)arrangePhotos();else updateMeta();}
-async function printPhotos(){if(photos.length===0){setStatus("사진이 없습니다");return;}setPrintEnabled(false);setStatus("고화질 인쇄 이미지 생성 중...");const dataUrl=await createPrintImage();printArea.innerHTML="";const image=document.createElement("img");image.className="printImage";image.src=dataUrl;printArea.appendChild(image);await waitImages(printArea);enterPrintMode();setStatus("인쇄 준비 완료");setTimeout(()=>{window.print();setPrintEnabled(true);},700);}
-async function createPrintImage(){const{w,h,cols,max,margin}=getLayout(),canvas=document.createElement("canvas");canvas.width=2480;canvas.height=3508;const ctx=canvas.getContext("2d");ctx.imageSmoothingEnabled=true;ctx.imageSmoothingQuality="high";ctx.fillStyle="#fff";ctx.fillRect(0,0,canvas.width,canvas.height);const pxPerCmX=canvas.width/A4_W_CM,pxPerCmY=canvas.height/A4_H_CM;for(let i=0;i<Math.min(photos.length,max);i++){const photo=photos[i],img=await loadImage(photo.src),x=(margin+(i%cols)*w)*pxPerCmX,y=(margin+Math.floor(i/cols)*h)*pxPerCmY,cellW=w*pxPerCmX,cellH=h*pxPerCmY;ctx.save();ctx.strokeStyle="#999";ctx.lineWidth=2;ctx.strokeRect(x,y,cellW,cellH);const imgRatio=img.naturalWidth/img.naturalHeight,cellRatio=cellW/cellH;let drawW,drawH,drawX,drawY;if(imgRatio>cellRatio){drawW=cellW;drawH=cellW/imgRatio;drawX=x;drawY=y+(cellH-drawH)/2;}else{drawH=cellH;drawW=cellH*imgRatio;drawX=x+(cellW-drawW)/2;drawY=y;}ctx.drawImage(img,drawX,drawY,drawW,drawH);ctx.restore();}return canvas.toDataURL("image/png");}
-function waitImages(root){const imgs=Array.from(root.querySelectorAll("img"));return Promise.all(imgs.map(img=>{if(img.complete&&img.naturalWidth>0)return Promise.resolve();return new Promise(resolve=>{img.onload=resolve;img.onerror=resolve;});}));}
-function enterPrintMode(){printModeActive=true;document.body.classList.add("printOnly");}
-function exitPrintMode(){printModeActive=false;document.body.classList.remove("printOnly");printArea.innerHTML="";}
-function resetWork(){photos=[];thumbs.innerHTML="";paper.innerHTML="";printArea.innerHTML="";photoInput.value="";document.body.classList.remove("printOnly");printModeActive=false;setStatus("배치 전");setPrintEnabled(false);updateMeta();}
+const photoInput=document.getElementById("photoInput"),thumbs=document.getElementById("thumbs"),paper=document.getElementById("paper"),statusEl=document.getElementById("status"),metaInfo=document.getElementById("metaInfo"),photoWidth=document.getElementById("photoWidth"),photoHeight=document.getElementById("photoHeight"),printBtn=document.getElementById("printBtn"),resetBtn=document.getElementById("resetBtn"),printArea=document.getElementById("printArea"),returnBtnTop=document.getElementById("returnBtnTop");
+let photos=[];
+const A4_W_CM=21,A4_H_CM=29.7,SAFE_MARGIN_CM=0.6;
+
+photoInput.addEventListener("change",loadPhotos);
+printBtn.addEventListener("click",printPhotos);
+resetBtn.addEventListener("click",resetWork);
+returnBtnTop.addEventListener("click",resetWork);
+photoWidth.addEventListener("change",autoRearrange);
+photoHeight.addEventListener("change",autoRearrange);
+photoWidth.addEventListener("blur",autoRearrange);
+photoHeight.addEventListener("blur",autoRearrange);
+
+updateMeta();setPrintEnabled(false);
+
+function setStatus(t){statusEl.textContent=t}
+function setPrintEnabled(v){printBtn.disabled=!v}
+function readFile(file){return new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res(r.result);r.onerror=rej;r.readAsDataURL(file)})}
+function loadImage(src){return new Promise(res=>{const img=new Image();img.onload=()=>res(img);img.onerror=()=>res(img);img.src=src})}
+
+async function loadPhotos(e){
+  exitPrintMode();photos=[];thumbs.innerHTML="";paper.innerHTML="";setPrintEnabled(false);
+  const files=Array.from(e.target.files);
+  if(!files.length){setStatus("배치 전");updateMeta();return}
+  setStatus(`사진 불러오는 중... 0/${files.length}`);
+  let loaded=0;
+  for(const file of files){
+    try{
+      const src=await readFile(file),img=await loadImage(src);
+      photos.push({src,width:img.naturalWidth,height:img.naturalHeight});
+      const thumb=document.createElement("img");thumb.className="thumb";thumb.src=src;thumbs.appendChild(thumb);
+      loaded++;setStatus(`사진 불러오는 중... ${loaded}/${files.length}`);
+    }catch(err){console.error(err)}
+  }
+  photoInput.value="";arrangePhotos();
+}
+
+function getLayout(){
+  const w=Number(photoWidth.value),h=Number(photoHeight.value),usableW=A4_W_CM-SAFE_MARGIN_CM*2,usableH=A4_H_CM-SAFE_MARGIN_CM*2;
+  const cols=Math.max(1,Math.floor(usableW/w)),rows=Math.max(1,Math.floor(usableH/h)),max=cols*rows;
+  return{w,h,cols,rows,max,margin:SAFE_MARGIN_CM}
+}
+
+function updateMeta(){
+  const {w,h,max}=getLayout(),count=photos.length,notPlaced=Math.max(0,count-max);
+  let text=`사진 ${count}장 / 최대 ${max}장 · 출력 크기 ${w} × ${h} cm`;
+  if(notPlaced>0)text+=` · ${notPlaced}장 미배치`;
+  metaInfo.textContent=text;
+}
+
+function makeCells(target){
+  target.innerHTML="";
+  const {w,h,cols,max,margin}=getLayout();
+  photos.slice(0,max).forEach((photo,index)=>{
+    const x=index%cols,y=Math.floor(index/cols),cell=document.createElement("div");
+    cell.className="photoCell";
+    cell.style.width=`${(w/A4_W_CM)*100}%`;cell.style.height=`${(h/A4_H_CM)*100}%`;
+    cell.style.left=`${((margin+x*w)/A4_W_CM)*100}%`;cell.style.top=`${((margin+y*h)/A4_H_CM)*100}%`;
+    const img=document.createElement("img");img.src=photo.src;img.draggable=false;
+    cell.appendChild(img);target.appendChild(cell);
+  });
+  return Math.min(photos.length,max);
+}
+
+function arrangePhotos(){
+  exitPrintMode();updateMeta();
+  if(!photos.length){setStatus("배치 전");setPrintEnabled(false);return}
+  const placed=makeCells(paper);setStatus(`사진 ${placed}장 배치 완료`);setPrintEnabled(true);
+}
+function autoRearrange(){photos.length?arrangePhotos():updateMeta()}
+
+async function printPhotos(){
+  if(!photos.length){setStatus("사진이 없습니다");return}
+  setPrintEnabled(false);setStatus("인쇄 이미지 생성 중...");
+  const dataUrl=await createPrintImage();
+  printArea.innerHTML="";
+  const image=document.createElement("img");image.className="printImage";image.src=dataUrl;printArea.appendChild(image);
+  await waitImages(printArea);
+  enterPrintMode();setStatus("인쇄 준비 완료");
+  setTimeout(()=>{window.print();setPrintEnabled(true)},700);
+}
+
+async function createPrintImage(){
+  const {w,h,cols,max,margin}=getLayout(),canvas=document.createElement("canvas");
+  canvas.width=2480;canvas.height=3508;
+  const ctx=canvas.getContext("2d");ctx.imageSmoothingEnabled=true;ctx.imageSmoothingQuality="high";ctx.fillStyle="#fff";ctx.fillRect(0,0,canvas.width,canvas.height);
+  const pxPerCmX=canvas.width/A4_W_CM,pxPerCmY=canvas.height/A4_H_CM;
+  for(let i=0;i<Math.min(photos.length,max);i++){
+    const photo=photos[i],img=await loadImage(photo.src);
+    const x=(margin+(i%cols)*w)*pxPerCmX,y=(margin+Math.floor(i/cols)*h)*pxPerCmY,cellW=w*pxPerCmX,cellH=h*pxPerCmY;
+    ctx.save();ctx.strokeStyle="#999";ctx.lineWidth=2;ctx.strokeRect(x,y,cellW,cellH);
+    const imgRatio=img.naturalWidth/img.naturalHeight,cellRatio=cellW/cellH;
+    let drawW,drawH,drawX,drawY;
+    if(imgRatio>cellRatio){drawW=cellW;drawH=cellW/imgRatio;drawX=x;drawY=y+(cellH-drawH)/2}else{drawH=cellH;drawW=cellH*imgRatio;drawX=x+(cellW-drawW)/2;drawY=y}
+    ctx.drawImage(img,drawX,drawY,drawW,drawH);ctx.restore();
+  }
+  return canvas.toDataURL("image/png");
+}
+
+function waitImages(root){
+  const imgs=Array.from(root.querySelectorAll("img"));
+  return Promise.all(imgs.map(img=>img.complete&&img.naturalWidth>0?Promise.resolve():new Promise(res=>{img.onload=res;img.onerror=res})));
+}
+
+function enterPrintMode(){document.body.classList.add("printOnly")}
+function exitPrintMode(){document.body.classList.remove("printOnly");printArea.innerHTML=""}
+function resetWork(){photos=[];thumbs.innerHTML="";paper.innerHTML="";printArea.innerHTML="";photoInput.value="";document.body.classList.remove("printOnly");setStatus("배치 전");setPrintEnabled(false);updateMeta()}
