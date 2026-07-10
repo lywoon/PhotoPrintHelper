@@ -1,4 +1,4 @@
-const photoInput=document.getElementById("photoInput"),thumbs=document.getElementById("thumbs"),paper=document.getElementById("paper"),statusEl=document.getElementById("status"),metaInfo=document.getElementById("metaInfo"),photoWidth=document.getElementById("photoWidth"),photoHeight=document.getElementById("photoHeight"),printBtn=document.getElementById("printBtn"),resetBtn=document.getElementById("resetBtn"),printArea=document.getElementById("printArea"),returnBtnTop=document.getElementById("returnBtnTop");
+const photoInput=document.getElementById("photoInput"),thumbs=document.getElementById("thumbs"),paper=document.getElementById("paper"),statusEl=document.getElementById("status"),metaInfo=document.getElementById("metaInfo"),overflowNotice=document.getElementById("overflowNotice"),overflowTitle=document.getElementById("overflowTitle"),photoWidth=document.getElementById("photoWidth"),photoHeight=document.getElementById("photoHeight"),printBtn=document.getElementById("printBtn"),resetBtn=document.getElementById("resetBtn"),printArea=document.getElementById("printArea"),returnBtnTop=document.getElementById("returnBtnTop");
 let photos=[];
 const A4_W_CM=21,A4_H_CM=29.7,SAFE_MARGIN_CM=0.6;
 
@@ -43,9 +43,16 @@ function getLayout(){
 
 function updateMeta(){
   const {w,h,max}=getLayout(),count=photos.length,notPlaced=Math.max(0,count-max);
-  let text=`사진 ${count}장 / 최대 ${max}장 · 출력 크기 ${w} × ${h} cm`;
-  if(notPlaced>0)text+=` · ${notPlaced}장 미배치`;
-  metaInfo.textContent=text;
+
+  metaInfo.textContent=`사진 ${count}장 / 최대 ${max}장 · 출력 크기 ${w} × ${h} cm`;
+
+  if(notPlaced>0){
+    overflowTitle.textContent=`⚠️ 현재 설정에서는 ${notPlaced}장이 배치되지 않습니다.`;
+    overflowNotice.hidden=false;
+  }else{
+    overflowTitle.textContent="";
+    overflowNotice.hidden=true;
+  }
 }
 
 function makeCells(target){
@@ -82,7 +89,7 @@ async function printPhotos(){
 
 async function createPrintImage(){
   const {w,h,cols,max,margin}=getLayout(),canvas=document.createElement("canvas");
-  canvas.width=2480;canvas.height=3508;
+  canvas.width=3508;canvas.height=4961;
   const ctx=canvas.getContext("2d");ctx.imageSmoothingEnabled=true;ctx.imageSmoothingQuality="high";ctx.fillStyle="#fff";ctx.fillRect(0,0,canvas.width,canvas.height);
   const pxPerCmX=canvas.width/A4_W_CM,pxPerCmY=canvas.height/A4_H_CM;
   for(let i=0;i<Math.min(photos.length,max);i++){

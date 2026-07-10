@@ -3,14 +3,14 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>PhotoPrintHelper v4.7</title>
-<link rel="stylesheet" href="style.css?v=47">
+<title>PhotoPrintHelper v4.8</title>
+<link rel="stylesheet" href="style.css?v=48">
 </head>
 <body>
 <div class="app" id="app">
   <header class="topbar">
     <h1>📷 PhotoPrintHelper</h1>
-    <span>v4.7</span>
+    <span>v4.8</span>
   </header>
 
   <section class="card">
@@ -39,6 +39,10 @@
       <span id="status">배치 전</span>
     </div>
     <div id="metaInfo" class="metaInfo">사진 0장 / 최대 0장 · 출력 크기 3 × 3 cm</div>
+    <div id="overflowNotice" class="overflowNotice" hidden>
+      <strong id="overflowTitle"></strong>
+      <span>사진 크기를 줄이거나 출력을 나눠 진행하세요.</span>
+    </div>
     <div class="paperWrap"><div id="paper" class="paper"></div></div>
   </section>
 </div>
@@ -51,6 +55,6 @@
 
 <div id="printArea"></div>
 
-<script src="script.js?v=47"></script>
+<script src="script.js?v=48"></script>
 </body>
 </html>
